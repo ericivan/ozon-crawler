@@ -177,13 +177,14 @@ curl "http://localhost:8000/keywords/suggest?product_name_cn=运动水壶&attrib
 
 ```ini
 PROXY_ENABLED=true
+PROXY_TYPE=http
 PROXY_HOST=192.168.1.100
 PROXY_PORT=7890
 PROXY_USER=username      # 可留空（无需认证时）
 PROXY_PASS=password      # 可留空
 ```
 
-系统在 IP 被封禁时自动切换代理，最多重试 3 次。
+`PROXY_TYPE` 支持 `http`、`https`、`socks5` 三种类型。系统在 IP 被封禁时自动切换代理，最多重试 3 次。
 
 ---
 

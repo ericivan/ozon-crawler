@@ -79,6 +79,13 @@ ozon-crawler/
 
 ## 核心数据流
 
+## 代理配置说明
+
+- `PROXY_ENABLED=true` 开启代理。
+- `PROXY_TYPE` 支持：`http` / `https` / `socks5`。
+- `PROXY_HOST`、`PROXY_PORT` 为必填（开启代理时）。
+- `PROXY_USER`、`PROXY_PASS` 按需填写（鉴权代理时）。
+
 ### 完整任务生命周期
 
 ```

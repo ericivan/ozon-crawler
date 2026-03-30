@@ -1,5 +1,7 @@
+from typing import Literal, Optional
+
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
-from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -15,6 +17,7 @@ class Settings(BaseSettings):
 
     # Proxy
     PROXY_ENABLED: bool = False
+    PROXY_TYPE: Literal["http", "https", "socks5"] = "http"
     PROXY_HOST: Optional[str] = None
     PROXY_PORT: Optional[int] = None
     PROXY_USER: Optional[str] = None
@@ -29,6 +32,13 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
 
+    @field_validator("PROXY_TYPE", mode="before")
+    @classmethod
+    def normalize_proxy_type(cls, value: str) -> str:
+        if value is None:
+            return "http"
+        return str(value).lower().strip()
+
     @property
     def db_url(self) -> str:
         return (
@@ -38,11 +48,12 @@ class Settings(BaseSettings):
 
     @property
     def proxy_url(self) -> Optional[str]:
-        if not self.PROXY_ENABLED or not self.PROXY_HOST:
+        if not self.PROXY_ENABLED or not self.PROXY_HOST or not self.PROXY_PORT:
             return None
+        scheme = self.PROXY_TYPE.lower()
         if self.PROXY_USER and self.PROXY_PASS:
-            return f"http://{self.PROXY_USER}:{self.PROXY_PASS}@{self.PROXY_HOST}:{self.PROXY_PORT}"
-        return f"http://{self.PROXY_HOST}:{self.PROXY_PORT}"
+            return f"{scheme}://{self.PROXY_USER}:{self.PROXY_PASS}@{self.PROXY_HOST}:{self.PROXY_PORT}"
+        return f"{scheme}://{self.PROXY_HOST}:{self.PROXY_PORT}"
 
 
 settings = Settings()
